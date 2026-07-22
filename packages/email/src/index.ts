@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-import { serverEnv } from "@repo/env";
+import { requireEnv, serverEnv } from "@repo/env";
 
 /**
  * Transactional email (Resend). SERVER-ONLY. Used by Inngest functions and
@@ -10,7 +10,7 @@ import { serverEnv } from "@repo/env";
 let cached: Resend | undefined;
 
 export function resend(): Resend {
-  if (!cached) cached = new Resend(serverEnv().RESEND_API_KEY);
+  if (!cached) cached = new Resend(requireEnv(serverEnv().RESEND_API_KEY, "RESEND_API_KEY"));
   return cached;
 }
 

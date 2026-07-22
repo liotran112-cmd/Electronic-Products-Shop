@@ -1,7 +1,7 @@
 import { algoliasearch, type Algoliasearch } from "algoliasearch";
 import { liteClient, type LiteClient } from "algoliasearch/lite";
 
-import { clientEnv, serverEnv } from "@repo/env";
+import { clientEnv, requireEnv, serverEnv } from "@repo/env";
 
 /**
  * PUBLIC search client (lite build) — safe in the browser and RSC. Uses the
@@ -20,5 +20,8 @@ export function searchClient(searchKey?: string): LiteClient {
  */
 export function adminClient(): Algoliasearch {
   const env = serverEnv();
-  return algoliasearch(env.NEXT_PUBLIC_ALGOLIA_APP_ID, env.ALGOLIA_ADMIN_KEY);
+  return algoliasearch(
+    env.NEXT_PUBLIC_ALGOLIA_APP_ID,
+    requireEnv(env.ALGOLIA_ADMIN_KEY, "ALGOLIA_ADMIN_KEY"),
+  );
 }

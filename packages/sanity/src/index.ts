@@ -1,3 +1,5 @@
+import { fetchWithTimeout, HttpError, isRetryableError, retry } from "@repo/core";
+
 /**
  * Sanity read client (GROQ). Editorial is a source of truth for tutorials,
  * guides, docs and marketing copy; this package will hold the schema, typed
@@ -22,9 +24,9 @@ export interface SanityClient {
 }
 
 /**
- * Placeholder GROQ client over the public query API (CDN). Swap for
- * `@sanity/client` once the package is added; kept dependency-free for the
- * Phase 1 scaffold so the workspace installs without external SDKs.
+ * GROQ client over the public query API (CDN), with timeout + retry. Swap for
+ * `@sanity/client` in Phase 3; kept dependency-light for now. Params are passed
+ * as individual `$name` query args (Sanity's documented encoding).
  */
 export const sanity: SanityClient = {
   async fetch<T>(groq: string, params: Record<string, unknown> = {}): Promise<T> {
@@ -34,10 +36,18 @@ export const sanity: SanityClient = {
       `https://${env.projectId}.apicdn.sanity.io/v${env.apiVersion}/data/query/${env.dataset}`,
     );
     url.searchParams.set("query", groq);
-    url.searchParams.set("$params", JSON.stringify(params));
+    for (const [key, value] of Object.entries(params)) {
+      url.searchParams.set(`$${key}`, JSON.stringify(value));
+    }
 
-    const res = await fetch(url, { headers: { Accept: "application/json" } });
-    if (!res.ok) throw new Error(`Sanity query error: ${res.status}`);
+    const res = await retry(
+      async () => {
+        const r = await fetchWithTimeout(url.toString(), { headers: { Accept: "application/json" } });
+        if (!r.ok) throw new HttpError(r.status, url.toString(), null, `Sanity query: ${r.status}`);
+        return r;
+      },
+      { retries: 3, isRetryable: isRetryableError },
+    );
     const json = (await res.json()) as { result: T };
     return json.result;
   },

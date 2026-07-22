@@ -5,11 +5,11 @@ import { EventSchemas, Inngest } from "inngest";
  * flows through these events so it is durable, retryable and idempotent (§1.5).
  */
 type Events = {
-  "shopify/product.updated": { data: { shopifyProductId: string } };
-  "shopify/product.deleted": { data: { shopifyProductId: string } };
-  "sanity/document.published": { data: { documentId: string; type: string } };
-  "supabase/specs.updated": { data: { productId: string } };
-  "quote/created": { data: { quoteId: string; reference: string } };
+  "shopify/product.updated": { data: { shopifyProductId: string; correlationId?: string } };
+  "shopify/product.deleted": { data: { shopifyProductId: string; correlationId?: string } };
+  "sanity/document.published": { data: { documentId: string; type: string; correlationId?: string } };
+  "supabase/specs.updated": { data: { productId: string; correlationId?: string } };
+  "quote/created": { data: { quoteId: string; reference: string; correlationId?: string } };
 };
 
 export const inngest = new Inngest({

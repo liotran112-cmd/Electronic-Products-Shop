@@ -24,21 +24,27 @@ const clientSchema = z.object({
   NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
   NEXT_PUBLIC_POSTHOG_HOST: z.string().url().default("https://us.i.posthog.com"),
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().optional(),
+  NEXT_PUBLIC_SITE_URL: z.string().url().default("http://localhost:3000"),
 });
 
+// Server SECRETS are all optional at the schema level so that one unset secret
+// (e.g. Resend) can never break an unrelated endpoint (e.g. the Shopify
+// webhook). Each consumer asserts exactly what IT needs via `requireEnv()` —
+// this is the separation-of-concerns boundary for configuration.
 const serverSchema = clientSchema.extend({
   SUPABASE_URL: z.string().url().optional(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-  SHOPIFY_STORE_DOMAIN: z.string().min(1),
-  SHOPIFY_ADMIN_ACCESS_TOKEN: z.string().min(1),
-  SHOPIFY_WEBHOOK_SECRET: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+  SHOPIFY_STORE_DOMAIN: z.string().optional(),
+  SHOPIFY_ADMIN_ACCESS_TOKEN: z.string().optional(),
+  SHOPIFY_WEBHOOK_SECRET: z.string().optional(),
   SANITY_WEBHOOK_SECRET: z.string().optional(),
-  ALGOLIA_ADMIN_KEY: z.string().min(1),
+  ALGOLIA_ADMIN_KEY: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional(),
   INNGEST_EVENT_KEY: z.string().optional(),
   INNGEST_SIGNING_KEY: z.string().optional(),
-  RESEND_API_KEY: z.string().min(1),
+  REVALIDATE_SECRET: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
   TURNSTILE_SECRET_KEY: z.string().optional(),
@@ -89,4 +95,12 @@ export function serverEnv(): ServerEnv {
     serverCache = parsed.data;
   }
   return serverCache;
+}
+
+/** Assert a (possibly-optional) env value is present at the point of use. */
+export function requireEnv<T>(value: T | undefined | null, name: string): T {
+  if (value === undefined || value === null || value === "") {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
 }

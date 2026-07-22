@@ -1,7 +1,8 @@
+import { deindexProduct } from "./deindex-product";
 import { quoteCreated } from "./quote-created";
 import { reindexProduct } from "./reindex-product";
 
 /** All Inngest functions, served together from apps/web/api/inngest. */
-export const functions = [reindexProduct, quoteCreated];
+export const functions = [reindexProduct, deindexProduct, quoteCreated];
 
-export { reindexProduct, quoteCreated };
+export { reindexProduct, deindexProduct, quoteCreated };

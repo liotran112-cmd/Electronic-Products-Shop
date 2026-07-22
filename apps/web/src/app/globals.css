@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Design tokens (FRONTEND §2 / UX-DESIGN §5). One saturated accent (electric
+ * blue), cool-biased neutrals, semantic colors kept separate. Values are HSL
+ * channels so Tailwind can apply opacity via `hsl(var(--token) / <alpha>)`.
+ * Theme resolution: light default → OS dark → explicit data-theme override wins.
+ */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 8%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 20% 96%;
+    --secondary-foreground: 240 10% 10%;
+    --muted: 240 20% 96%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 221 83% 96%;
+    --accent-foreground: 221 83% 40%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 71% 40%;
+    --warning: 38 92% 50%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 221 83% 53%;
+    --radius: 0.625rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --background: 240 10% 6%;
+      --foreground: 0 0% 98%;
+      --card: 240 9% 9%;
+      --card-foreground: 0 0% 98%;
+      --popover: 240 9% 9%;
+      --popover-foreground: 0 0% 98%;
+      --primary: 217 91% 66%;
+      --primary-foreground: 222 47% 11%;
+      --secondary: 240 6% 15%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 240 6% 15%;
+      --muted-foreground: 240 5% 65%;
+      --accent: 221 40% 18%;
+      --accent-foreground: 217 91% 80%;
+      --destructive: 0 63% 55%;
+      --destructive-foreground: 0 0% 98%;
+      --success: 142 60% 48%;
+      --warning: 38 92% 55%;
+      --border: 240 5% 18%;
+      --input: 240 5% 18%;
+      --ring: 217 91% 66%;
+    }
+  }
+
+  :root[data-theme="dark"],
+  .dark {
+    --background: 240 10% 6%;
+    --foreground: 0 0% 98%;
+    --card: 240 9% 9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 9% 9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 217 91% 66%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 240 6% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 6% 15%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 221 40% 18%;
+    --accent-foreground: 217 91% 80%;
+    --destructive: 0 63% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 60% 48%;
+    --warning: 38 92% 55%;
+    --border: 240 5% 18%;
+    --input: 240 5% 18%;
+    --ring: 217 91% 66%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}

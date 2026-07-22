@@ -1,0 +1,19 @@
+{
+  "//": "Base config for editors at the repo root. Each package extends @repo/config directly.",
+  "extends": "./packages/config/typescript/base.json",
+  "files": [],
+  "references": [
+    { "path": "./apps/web" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/db" },
+    { "path": "./packages/env" },
+    { "path": "./packages/email" },
+    { "path": "./packages/media" },
+    { "path": "./packages/analytics" },
+    { "path": "./packages/kv" },
+    { "path": "./packages/events" },
+    { "path": "./packages/sanity" },
+    { "path": "./packages/search" },
+    { "path": "./packages/shopify" }
+  ]
+}

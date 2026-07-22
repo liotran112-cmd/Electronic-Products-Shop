@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button } from "@repo/ui";
 
 const sources = [
@@ -9,7 +11,7 @@ const sources = [
 
 export default function HomePage() {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
+    <div className="mx-auto max-w-3xl px-6 py-16">
       <p className="font-mono text-sm text-primary">Phase 1 · Foundation</p>
       <h1 className="mt-2 text-4xl font-semibold tracking-tight text-balance">
         Electronics Commerce Platform
@@ -29,9 +31,13 @@ export default function HomePage() {
       </ul>
 
       <div className="mt-10 flex gap-3">
-        <Button>Browse catalog</Button>
-        <Button variant="outline">Request a quote</Button>
+        <Button asChild>
+          <Link href="/search">Browse catalog</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/quote">Request a quote</Link>
+        </Button>
       </div>
-    </main>
+    </div>
   );
 }

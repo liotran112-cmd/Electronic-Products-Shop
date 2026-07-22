@@ -12,6 +12,8 @@ Read the relevant doc before implementing a subsystem — do not re-derive decis
 - [docs/PRODUCT-PAGE.md](docs/PRODUCT-PAGE.md) — PDP data contract, archetypes, structured data
 - [docs/SEARCH.md](docs/SEARCH.md) — Algolia index, ranking, sync pipeline
 - [docs/CUSTOM-DEVICE-WORKFLOW.md](docs/CUSTOM-DEVICE-WORKFLOW.md) — RFQ / configure-to-order engine
+- [docs/BFF-READ-ARCHITECTURE.md](docs/BFF-READ-ARCHITECTURE.md) — read-side domain services, ownership, caching (the only backend interface for UI)
+- [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md) — frontend foundation: tokens, primitives, electronics component library, hooks
 
 ## Locked decisions (do not relitigate)
 
@@ -48,7 +50,8 @@ Then implement. Keep the explanation proportional to the change.
 
 ## Conventions
 
-- **Monorepo:** Turborepo + pnpm. `apps/web`, `packages/{ui,config,env,db,shopify,sanity,search,events,email,media,analytics,kv}` (ARCHITECTURE §11, FRONTEND §4). One package per third-party service; server-only SDKs isolated behind subpath exports (e.g. `@repo/analytics/server`).
+- **Monorepo:** Turborepo + pnpm. `apps/web`, `packages/{ui,config,env,core,db,shopify,sanity,search,events,email,media,analytics,kv,domain,cache,bff}` (ARCHITECTURE §11, FRONTEND §4). One package per third-party service; server-only SDKs isolated behind subpath exports (e.g. `@repo/analytics/server`).
+- **Read side = BFF (`docs/BFF-READ-ARCHITECTURE.md`).** Frontend consumes ONLY `@repo/bff` (domain services) + `@repo/domain` (types). Importing a source package (`@repo/shopify/db/search/sanity`, `algoliasearch`, `@supabase/*`) from `apps/web` is **blocked by ESLint** (`no-restricted-imports`). Repositories (in `@repo/bff`) are the only code that touches a source; mappers are pure; services compose + cache + handle errors. `@repo/core` = structured logger + HTTP timeout/retry.
 - **Env:** never read `process.env` directly in features — import validated `clientEnv()` / `serverEnv()` from `@repo/env`.
 - **shadcn/ui:** initialized in `packages/ui` (`components.json`, `new-york`, CSS-variable tokens). Add primitives with `cd packages/ui && npx shadcn@latest add <c>`. Design tokens live in `apps/web/src/app/globals.css`; brand = `--primary` electric blue.
 - **Styling:** Tailwind + design tokens (CSS vars) from `packages/ui`; never inline hardcoded colors — use tokens (FRONTEND §2).

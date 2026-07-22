@@ -183,6 +183,98 @@ export interface SyncEventsTable {
   Relationships: [];
 }
 
+// ── Read-side tables (subset used by the BFF; full set via gen:types) ────
+
+export interface DocumentsTable {
+  Row: {
+    id: string;
+    product_id: string;
+    doc_type: "manual" | "datasheet" | "certificate" | "cad" | "guide" | "schematic";
+    title: string;
+    url: string;
+    language: string | null;
+    version: string | null;
+    size_bytes: number | null;
+    is_public: boolean;
+    published_at: string | null;
+  };
+  Insert: Partial<DocumentsTable["Row"]> & { product_id: string; doc_type: DocumentsTable["Row"]["doc_type"]; title: string; url: string };
+  Update: Partial<DocumentsTable["Row"]>;
+  Relationships: [];
+}
+
+export interface CompatibilityTable {
+  Row: {
+    id: string;
+    product_id: string;
+    target_kind: "product" | "platform" | "standard" | "protocol" | "ecosystem";
+    target_product_id: string | null;
+    target_name: string | null;
+    notes: string | null;
+    verified: boolean;
+  };
+  Insert: Partial<CompatibilityTable["Row"]> & { product_id: string; target_kind: CompatibilityTable["Row"]["target_kind"] };
+  Update: Partial<CompatibilityTable["Row"]>;
+  Relationships: [];
+}
+
+export interface UserProfilesTable {
+  Row: {
+    id: string;
+    shopify_customer_id: string | null;
+    company: string | null;
+    role: string | null;
+    b2b_account_id: string | null;
+    created_at: string;
+  };
+  Insert: Partial<UserProfilesTable["Row"]> & { id: string };
+  Update: Partial<UserProfilesTable["Row"]>;
+  Relationships: [];
+}
+
+export interface WishlistsTable {
+  Row: { id: string; user_id: string; product_id: string; added_at: string };
+  Insert: Partial<WishlistsTable["Row"]> & { user_id: string; product_id: string };
+  Update: Partial<WishlistsTable["Row"]>;
+  Relationships: [];
+}
+
+export interface DeviceOwnershipTable {
+  Row: { user_id: string; product_id: string; serial: string | null; registered_at: string };
+  Insert: Partial<DeviceOwnershipTable["Row"]> & { user_id: string; product_id: string };
+  Update: Partial<DeviceOwnershipTable["Row"]>;
+  Relationships: [];
+}
+
+export interface QuoteRequestsTable {
+  Row: {
+    id: string;
+    reference: string;
+    user_id: string | null;
+    company: string | null;
+    contact_email: string;
+    status: "new" | "reviewing" | "quoted" | "negotiation" | "accepted" | "won" | "lost" | "cancelled";
+    created_at: string;
+  };
+  Insert: Partial<QuoteRequestsTable["Row"]> & { reference: string; contact_email: string };
+  Update: Partial<QuoteRequestsTable["Row"]>;
+  Relationships: [];
+}
+
+export interface QuoteItemsTable {
+  Row: {
+    id: string;
+    quote_id: string;
+    product_id: string | null;
+    description: string;
+    quantity: number;
+    target_price: number | null;
+  };
+  Insert: Partial<QuoteItemsTable["Row"]> & { quote_id: string; description: string };
+  Update: Partial<QuoteItemsTable["Row"]>;
+  Relationships: [];
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -191,6 +283,13 @@ export interface Database {
       products: ProductsTable;
       product_variants: ProductVariantsTable;
       sync_events: SyncEventsTable;
+      documents: DocumentsTable;
+      compatibility: CompatibilityTable;
+      user_profiles: UserProfilesTable;
+      wishlists: WishlistsTable;
+      device_ownership: DeviceOwnershipTable;
+      quote_requests: QuoteRequestsTable;
+      quote_items: QuoteItemsTable;
     };
     Views: Record<string, never>;
     Functions: {

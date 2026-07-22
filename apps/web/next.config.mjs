@@ -5,8 +5,11 @@ const nextConfig = {
   transpilePackages: [
     "@repo/ui",
     "@repo/analytics",
+    "@repo/bff",
+    "@repo/cache",
     "@repo/core",
     "@repo/db",
+    "@repo/domain",
     "@repo/email",
     "@repo/env",
     "@repo/events",
@@ -22,7 +25,9 @@ const nextConfig = {
       { protocol: "https", hostname: "cdn.shopify.com" },
     ],
   },
-  typedRoutes: true,
+  // Routes are data-driven (hrefs come from the BFF as strings), so typedRoutes
+  // (which validates against statically-known routes) is intentionally off.
+  typedRoutes: false,
 };
 
 export default nextConfig;
